@@ -14,21 +14,29 @@ public class KrabbeController : MonoBehaviour
     public GameObject gameOverUI;           // UI til game over (skal sættes i Inspector)
     public GameObject explosionPrefab;      // Eksplosions-animation prefab (sæt i Inspector)
     public GameObject restartButton;        // Restart knap (sæt i Inspector)
-
     private bool isGameOver = false;
+    public float maxPlayTime = 180f;  // 3 minutter = 180 sekunder
+    private float timeRemaining;
+    public TextMeshProUGUI timerText;  // Reference til UI-tekst
+
 
     private void Start()
     {
-        // Indlæs tidligere high score fra PlayerPrefs (gemt på computeren)
-        highScore = PlayerPrefs.GetInt("HighScore", 0);
+    // Indlæs tidligere high score fra PlayerPrefs (gemt på computeren)
+    highScore = PlayerPrefs.GetInt("HighScore", 0);
 
-        UpdateScoreText();
-        UpdateHighScoreText();
+    // Start med fuld spilletid (3 minutter)
+    timeRemaining = maxPlayTime;
 
-        gameOverUI.SetActive(false);    // Skjul game over tekst i starten
-        if (restartButton != null)
-            restartButton.SetActive(false);  // Skjul restart knap i starten
+    UpdateScoreText();
+    UpdateHighScoreText();
+    UpdateTimerText(); // ← viser "03:00" i starten
+
+    gameOverUI.SetActive(false);    // Skjul game over tekst i starten
+    if (restartButton != null)
+        restartButton.SetActive(false);  // Skjul restart knap i starten
     }
+
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -78,8 +86,7 @@ public class KrabbeController : MonoBehaviour
             Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         }
 
-        // Slet krabben (eller deaktiver den)
-        Destroy(gameObject);
+        gameObject.SetActive(false);  // Sluk krabben, men slet den ikke
     }
 
     private void UpdateScoreText()
@@ -108,4 +115,6 @@ public class KrabbeController : MonoBehaviour
     {
         return isGameOver;
     }
+    
+    
 }
