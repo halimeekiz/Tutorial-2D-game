@@ -15,7 +15,7 @@ public class KrabbeController : MonoBehaviour
     public GameObject explosionPrefab;      // Eksplosions-animation prefab (sæt i Inspector)
     public GameObject restartButton;        // Restart knap (sæt i Inspector)
     private bool isGameOver = false;
-    public float maxPlayTime = 180f;  // 3 minutter = 180 sekunder
+    public float maxPlayTime = 120f;  // 3 minutter = 180 sekunder
     private float timeRemaining;
     public TextMeshProUGUI timerText;  // Reference til UI-tekst
 
@@ -96,6 +96,24 @@ public class KrabbeController : MonoBehaviour
             scoreText.text = "Score: " + score;
         }
     }
+    
+    private void Update()
+    {
+        if (isGameOver) return;
+
+        // Tæl tiden ned
+        timeRemaining -= Time.deltaTime;
+
+        if (timeRemaining <= 0)
+        {
+            timeRemaining = 0;
+            UpdateTimerText();
+            Explode();  // Spillet slutter, når tiden løber ud
+            return;
+        }
+
+        UpdateTimerText();
+    }
 
     private void UpdateHighScoreText()
     {
@@ -104,6 +122,17 @@ public class KrabbeController : MonoBehaviour
             highScoreText.text = "High Score: " + highScore;
         }
     }
+
+private void UpdateTimerText()
+{
+    if (timerText != null)
+    {
+        int minutes = Mathf.FloorToInt(timeRemaining / 60);
+        int seconds = Mathf.FloorToInt(timeRemaining % 60);
+        timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+}
+
 
     // Funktion til at genstarte spillet (kan kaldes fra restart knap)
     public void RestartGame()
